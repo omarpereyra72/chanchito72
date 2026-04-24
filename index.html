@@ -483,7 +483,8 @@
       <button class="numpad-btn" onclick="numpadPress('gasto','1')">1</button>
       <button class="numpad-btn" onclick="numpadPress('gasto','2')">2</button>
       <button class="numpad-btn" onclick="numpadPress('gasto','3')">3</button>
-      <button class="numpad-btn zero" onclick="numpadPress('gasto','0')">0</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','0')">0</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','.')">.</button>
       <button class="numpad-btn del" onclick="numpadDel('gasto')">⌫</button>
     </div>
 
@@ -535,7 +536,8 @@
       <button class="numpad-btn" onclick="numpadPress('ingreso','1')">1</button>
       <button class="numpad-btn" onclick="numpadPress('ingreso','2')">2</button>
       <button class="numpad-btn" onclick="numpadPress('ingreso','3')">3</button>
-      <button class="numpad-btn zero" onclick="numpadPress('ingreso','0')">0</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','0')">0</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','.')">.</button>
       <button class="numpad-btn del" onclick="numpadDel('ingreso')">⌫</button>
     </div>
 
@@ -727,10 +729,38 @@ function switchTab(tipo) {
   document.getElementById(`panel-${tipo}`).classList.add('active');
 }
 
+// ─── TECLADO FÍSICO ──────────────────────────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  // No interceptar si el foco está en un input/select/textarea
+  const tag = document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+  // Detectar tab activo
+  const tipo = document.getElementById('panel-gasto').classList.contains('active') ? 'gasto' : 'ingreso';
+
+  if (e.key >= '0' && e.key <= '9') { numpadPress(tipo, e.key); return; }
+  if (e.key === '.' || e.key === ',') { numpadPress(tipo, '.'); return; }
+  if (e.key === 'Backspace') { numpadDel(tipo); return; }
+  if (e.key === 'Enter') { enviar(tipo); return; }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    switchTab(tipo === 'gasto' ? 'ingreso' : 'gasto');
+  }
+});
+
 // ─── NUMPAD ──────────────────────────────────────────────────────────────────
 function numpadPress(tipo, digit) {
-  if (state[tipo].length >= 10) return;
-  if (digit === '0' && state[tipo] === '') return;
+  const cur = state[tipo];
+  // Solo un punto decimal
+  if (digit === '.' && cur.includes('.')) return;
+  // No empezar con punto — agrega "0." automáticamente
+  if (digit === '.' && cur === '') { state[tipo] = '0.'; updateDisplay(tipo); document.getElementById(`monto-manual-${tipo}`).value = state[tipo]; return; }
+  // No empezar con 0 seguido de número (ej: "07") — salvo "0."
+  if (digit !== '.' && cur === '0') { state[tipo] = digit; updateDisplay(tipo); document.getElementById(`monto-manual-${tipo}`).value = state[tipo]; return; }
+  // Máx 2 decimales
+  if (cur.includes('.') && cur.split('.')[1].length >= 2) return;
+  // Máx 12 caracteres totales
+  if (cur.length >= 12) return;
   state[tipo] += digit;
   updateDisplay(tipo);
   document.getElementById(`monto-manual-${tipo}`).value = state[tipo];
@@ -746,13 +776,24 @@ function numpadDel(tipo) {
 
 function syncManual(tipo) {
   const val = document.getElementById(`monto-manual-${tipo}`).value;
-  state[tipo] = val ? String(Math.abs(Math.round(parseFloat(val)) || 0)) : '';
+  state[tipo] = val ? String(parseFloat(val) || 0) : '';
   updateDisplay(tipo);
 }
 
 function updateDisplay(tipo) {
-  const num = parseInt(state[tipo]) || 0;
-  document.getElementById(`val-${tipo}`).textContent = num.toLocaleString('es-AR');
+  const raw = state[tipo];
+  // Si termina en punto o tiene decimales en edición, mostrar tal cual
+  if (raw === '' || raw === '0') {
+    document.getElementById(`val-${tipo}`).textContent = '0';
+    return;
+  }
+  // Separar parte entera y decimal para formatear solo la parte entera con separador de miles
+  const partes = raw.split('.');
+  const entera = parseInt(partes[0] || '0').toLocaleString('es-AR');
+  const decimal = partes.length > 1 ? ',' + partes[1] : '';
+  // Si termina en punto mostramos la coma de inicio de decimales
+  const terminaEnPunto = raw.endsWith('.');
+  document.getElementById(`val-${tipo}`).textContent = entera + (terminaEnPunto ? ',' : decimal);
 }
 
 function haptic(ms) {
@@ -769,7 +810,7 @@ function toggleExtras(tipo) {
 
 // ─── ENVIAR ──────────────────────────────────────────────────────────────────
 async function enviar(tipo) {
-  const monto = parseInt(state[tipo]) || 0;
+  const monto = parseFloat(state[tipo]) || 0;
   const cat   = document.getElementById(`cat-${tipo}`).value.trim();
   const fecha = document.getElementById(`fecha-${tipo}`).value;
   const descEl = document.getElementById(`desc-${tipo}`);
@@ -823,7 +864,7 @@ async function enviar(tipo) {
 
     if (ok) {
       const emoji = tipo === 'gasto' ? '▼' : '▲';
-      showToast(`${emoji} ${tipo.toUpperCase()} $${monto.toLocaleString('es-AR')} guardado`, 'ok');
+      showToast(`${emoji} ${tipo.toUpperCase()} $${parseFloat(monto).toLocaleString('es-AR')} guardado`, 'ok');
       resetForm(tipo);
       haptic([50, 30, 80]);
     } else {
