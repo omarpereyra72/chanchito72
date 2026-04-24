@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Chanchito72 💰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #161616;
+    --border: #1e1e1e;
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --green-dark: #004422;
+    --green-btn: #003318;
+    --red: #ff3b3b;
+    --red-dim: #cc2222;
+    --red-dark: #440000;
+    --red-btn: #330000;
+    --amber: #ffaa00;
+    --amber-dim: #cc8800;
+    --text: #c8ffc8;
+    --text-dim: #668866;
+    --text-muted: #334433;
+    --scan-line: rgba(0,255,136,0.03);
+    --font-main: 'Share Tech Mono', monospace;
+    --font-display: 'VT323', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--scan-line) 2px,
+      var(--scan-line) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px 48px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .pig-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 10px;
+    display: block;
+  }
+
+  .header h1 {
+    font-family: var(--font-display);
+    font-size: 42px;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px rgba(0,255,136,0.4);
+    line-height: 1;
+  }
+
+  .header .subtitle {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .blink { animation: blink 1.2s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tab-btn {
+    padding: 14px 8px;
+    border: 1px solid;
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .tab-btn:active::after { opacity: 0.08; }
+
+  .tab-gasto { color: var(--red); border-color: var(--red-dark); }
+  .tab-gasto.active {
+    background: var(--red-btn);
+    border-color: var(--red-dim);
+    box-shadow: 0 0 16px rgba(255,59,59,0.15), inset 0 0 12px rgba(255,59,59,0.08);
+  }
+
+  .tab-ingreso { color: var(--green); border-color: var(--green-dark); }
+  .tab-ingreso.active {
+    background: var(--green-btn);
+    border-color: var(--green-dim);
+    box-shadow: 0 0 16px rgba(0,255,136,0.15), inset 0 0 12px rgba(0,255,136,0.08);
+  }
+
+  .panel { display: none; animation: fadeIn 0.2s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--text-dim);
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font-main);
+    font-size: 15px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  textarea { resize: none; height: 72px; line-height: 1.5; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23668866' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  .panel-gasto input:focus,
+  .panel-gasto select:focus,
+  .panel-gasto textarea:focus {
+    border-color: var(--red-dim);
+    box-shadow: 0 0 0 2px rgba(255,59,59,0.08);
+  }
+
+  .panel-ingreso input:focus,
+  .panel-ingreso select:focus,
+  .panel-ingreso textarea:focus {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.08);
+  }
+
+  .amount-display {
+    font-family: var(--font-display);
+    font-size: 52px;
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 10px 0 4px;
+    min-height: 68px;
+    line-height: 1;
+  }
+  .amount-display.gasto { color: var(--red); }
+  .amount-display.ingreso { color: var(--green); }
+  .amount-display .prefix { font-size: 28px; opacity: 0.7; margin-right: 4px; }
+
+  .amount-input-wrap input[type="number"] {
+    font-family: var(--font-display);
+    font-size: 32px;
+    text-align: center;
+    padding: 14px;
+    letter-spacing: 2px;
+  }
+  .panel-gasto .amount-input-wrap input { color: var(--red); border-color: #440000; }
+  .panel-ingreso .amount-input-wrap input { color: var(--green); border-color: #004422; }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .numpad-btn {
+    padding: 18px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    font-family: var(--font-display);
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.1s;
+    color: var(--text);
+    -webkit-appearance: none;
+    user-select: none;
+  }
+
+  .numpad-btn:active { transform: scale(0.93); }
+  .panel-gasto .numpad-btn:active { background: var(--red-btn); border-color: var(--red-dark); color: var(--red); }
+  .panel-ingreso .numpad-btn:active { background: var(--green-btn); border-color: var(--green-dark); color: var(--green); }
+  .numpad-btn.del { color: var(--amber-dim); font-size: 20px; }
+  .numpad-btn.zero { grid-column: span 2; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--font-display);
+    font-size: 32px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn:active { transform: scale(0.97); }
+
+  .submit-btn.gasto {
+    background: var(--red-btn);
+    color: var(--red);
+    border: 1px solid var(--red-dim);
+    box-shadow: 0 0 20px rgba(255,59,59,0.2);
+  }
+  .submit-btn.gasto:hover { background: #440000; }
+
+  .submit-btn.ingreso {
+    background: var(--green-btn);
+    color: var(--green);
+    border: 1px solid var(--green-dim);
+    box-shadow: 0 0 20px rgba(0,255,136,0.2);
+  }
+  .submit-btn.ingreso:hover { background: #004422; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: var(--font-main);
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: transform 0.25s ease, opacity 0.25s;
+    opacity: 0;
+    z-index: 1000;
+    white-space: nowrap;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.ok { color: var(--green); border-color: var(--green-dark); }
+  .toast.err { color: var(--red); border-color: var(--red-dark); }
+  .toast.warn { color: var(--amber); border-color: var(--amber-dim); }
+
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.88);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .loading-overlay.show { display: flex; }
+  .loading-text {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--green);
+    letter-spacing: 3px;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--green-dark);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .extras-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-main);
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    padding: 8px;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .extras-toggle:active { color: var(--text-dim); }
+  .extras-panel { display: none; }
+  .extras-panel.open { display: block; }
+
+  .dashboard-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--amber-dim);
+    font-family: var(--font-main);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-top: 24px;
+  }
+  .dashboard-link:active { background: var(--surface2); border-color: var(--amber-dim); }
+
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    line-height: 1.8;
+  }
+
+  /* status indicator */
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    margin-right: 6px;
+    vertical-align: middle;
+    transition: background 0.3s;
+  }
+  .status-dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.offline { background: var(--red); }
+
+  select option { background: #111; color: #c8ffc8; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">ENVIANDO...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="container">
+
+  <div class="header">
+    <svg class="pig-icon" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="36" cy="40" rx="24" ry="20" fill="#1a0a1a" stroke="#00ff88" stroke-width="1.5"/>
+      <circle cx="54" cy="28" r="13" fill="#1a0a1a" stroke="#00ff88" stroke-width="1.5"/>
+      <ellipse cx="62" cy="32" rx="7" ry="5" fill="#001a0d" stroke="#00cc6a" stroke-width="1"/>
+      <circle cx="60" cy="33" r="1.2" fill="#00ff88" opacity="0.7"/>
+      <circle cx="64" cy="33" r="1.2" fill="#00ff88" opacity="0.7"/>
+      <circle cx="52" cy="25" r="2" fill="#00ff88"/>
+      <circle cx="52.6" cy="24.4" r="0.6" fill="#0a0a0a"/>
+      <ellipse cx="52" cy="17" rx="5" ry="4" fill="#001a0d" stroke="#00cc6a" stroke-width="1" transform="rotate(-15 52 17)"/>
+      <rect x="18" y="55" width="7" height="10" rx="3" fill="#001a0d" stroke="#00cc6a" stroke-width="1"/>
+      <rect x="28" y="56" width="7" height="10" rx="3" fill="#001a0d" stroke="#00cc6a" stroke-width="1"/>
+      <rect x="38" y="56" width="7" height="10" rx="3" fill="#001a0d" stroke="#00cc6a" stroke-width="1"/>
+      <rect x="48" y="55" width="7" height="10" rx="3" fill="#001a0d" stroke="#00cc6a" stroke-width="1"/>
+      <path d="M12 38 Q6 34 8 28 Q10 24 14 26" fill="none" stroke="#00cc6a" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="30" y="45" font-family="monospace" font-size="18" font-weight="bold" fill="#00ff88" text-anchor="middle">$</text>
+    </svg>
+    <h1>CHANCHITO<span class="blink">_</span></h1>
+    <div class="subtitle">72 · finanzas personales · cba · ar</div>
+    <div style="margin-top:8px;font-size:10px;color:var(--text-muted)">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">verificando conexión...</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn tab-gasto active" onclick="switchTab('gasto')">▼ GASTO</button>
+    <button class="tab-btn tab-ingreso" onclick="switchTab('ingreso')">▲ INGRESO</button>
+  </div>
+
+  <!-- PANEL GASTO -->
+  <div class="panel panel-gasto active" id="panel-gasto">
+    <div class="amount-display gasto">
+      <span class="prefix">$</span><span id="val-gasto">0</span>
+    </div>
+
+    <div class="numpad">
+      <button class="numpad-btn" onclick="numpadPress('gasto','7')">7</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','8')">8</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','9')">9</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','4')">4</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','5')">5</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','6')">6</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','1')">1</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','2')">2</button>
+      <button class="numpad-btn" onclick="numpadPress('gasto','3')">3</button>
+      <button class="numpad-btn zero" onclick="numpadPress('gasto','0')">0</button>
+      <button class="numpad-btn del" onclick="numpadDel('gasto')">⌫</button>
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">detalles</div>
+
+    <div class="field">
+      <label>Categoría *</label>
+      <select id="cat-gasto"><option value="">cargando...</option></select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Fecha *</label>
+        <input type="date" id="fecha-gasto">
+      </div>
+      <div class="field">
+        <label>Monto manual</label>
+        <input type="number" id="monto-manual-gasto" placeholder="0" min="0" step="1" oninput="syncManual('gasto')">
+      </div>
+    </div>
+
+    <button class="extras-toggle" onclick="toggleExtras('gasto')">+ descripción opcional</button>
+    <div class="extras-panel" id="extras-gasto">
+      <div class="field" style="margin-top:10px">
+        <label>Descripción</label>
+        <textarea id="desc-gasto" placeholder="ej: supermercado dia..."></textarea>
+      </div>
+    </div>
+
+    <button class="submit-btn gasto" id="btn-gasto" onclick="enviar('gasto')">
+      ▼ REGISTRAR GASTO
+    </button>
+  </div>
+
+  <!-- PANEL INGRESO -->
+  <div class="panel panel-ingreso" id="panel-ingreso">
+    <div class="amount-display ingreso">
+      <span class="prefix">$</span><span id="val-ingreso">0</span>
+    </div>
+
+    <div class="numpad">
+      <button class="numpad-btn" onclick="numpadPress('ingreso','7')">7</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','8')">8</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','9')">9</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','4')">4</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','5')">5</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','6')">6</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','1')">1</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','2')">2</button>
+      <button class="numpad-btn" onclick="numpadPress('ingreso','3')">3</button>
+      <button class="numpad-btn zero" onclick="numpadPress('ingreso','0')">0</button>
+      <button class="numpad-btn del" onclick="numpadDel('ingreso')">⌫</button>
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">detalles</div>
+
+    <div class="field">
+      <label>Categoría *</label>
+      <select id="cat-ingreso"><option value="">cargando...</option></select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Fecha *</label>
+        <input type="date" id="fecha-ingreso">
+      </div>
+      <div class="field">
+        <label>Monto manual</label>
+        <input type="number" id="monto-manual-ingreso" placeholder="0" min="0" step="1" oninput="syncManual('ingreso')">
+      </div>
+    </div>
+
+    <button class="extras-toggle" onclick="toggleExtras('ingreso')">+ descripción opcional</button>
+    <div class="extras-panel" id="extras-ingreso">
+      <div class="field" style="margin-top:10px">
+        <label>Descripción</label>
+        <textarea id="desc-ingreso" placeholder="ej: sueldo mayo..."></textarea>
+      </div>
+    </div>
+
+    <button class="submit-btn ingreso" id="btn-ingreso" onclick="enviar('ingreso')">
+      ▲ REGISTRAR INGRESO
+    </button>
+  </div>
+
+  <!-- DASHBOARD LINK -->
+  <a class="dashboard-link"
+     href="https://script.google.com/macros/s/AKfycbwOpkPmZ9WM6hIRoBl5ZHRya3_Wlth_fMwN5K0sBc6b7z-SnLx7G_I9DBFj1NtfOUrH/exec"
+     target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="3" width="14" height="10" rx="1.5" stroke="#cc8800" stroke-width="1.2"/>
+      <path d="M1 6h14" stroke="#cc8800" stroke-width="1.2"/>
+      <rect x="4" y="9" width="2" height="2" rx="0.5" fill="#cc8800"/>
+      <rect x="7" y="9" width="2" height="2" rx="0.5" fill="#cc8800"/>
+      <rect x="10" y="9" width="2" height="2" rx="0.5" fill="#cc8800"/>
+    </svg>
+    VER DASHBOARD PRINCIPAL
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <path d="M2 8L8 2M8 2H4M8 2V6" stroke="#cc8800" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </a>
+
+  <div class="footer">
+    CHANCHITO72 · FINANZAS PERSONALES · CBA · AR<br>
+    <span style="opacity:0.4">datos guardados en google sheets · finanzas para dummies</span>
+  </div>
+
+</div>
+
+<script>
+// ─── CONFIG ─────────────────────────────────────────────────────────────────
+// En producción (Vercel) usa /api/proxy.
+// En desarrollo local usa el Apps Script directo con no-cors.
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const PROXY_URL = '/api/proxy';
+const DIRECT_URL = 'https://script.google.com/macros/s/AKfycbwOpkPmZ9WM6hIRoBl5ZHRya3_Wlth_fMwN5K0sBc6b7z-SnLx7G_I9DBFj1NtfOUrH/exec';
+
+// ─── CATEGORIAS FALLBACK ─────────────────────────────────────────────────────
+const CAT_FALLBACK = [
+  'Ahorros / Fondo de Emergencia',
+  'Alimentación y Supermercado',
+  'Automovil-mantenimiento',
+  'Automovil-lavado',
+  'Cuidado Personal',
+  'Costos financieros Tarjeta',
+  'Donaciones y Fe',
+  'Educación',
+  'Entretenimiento y Ocio',
+  'Hogar - Limpieza',
+  'Iglesia',
+  'Impuesto',
+  'Indumentaria y Calzado',
+  'Internet',
+  'Mascota',
+  'Mecánico',
+  'Miscelaneas',
+  'Salud',
+  'Salud Mental',
+  'Seguros',
+  'Tarjeta de Crédito',
+  'Taxi-Uber-Remis',
+  'Transporte Público (SUBE/Colectivo)',
+  'Vivienda y Servicios',
+  // Ingresos
+  'Sueldo',
+  'Freelance / Honorarios',
+  'Otros Ingresos',
+  'Reintegro',
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const state = { gasto: '', ingreso: '' };
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  setTodayDates();
+  loadCategorias();
+  checkConnectivity();
+});
+
+function setTodayDates() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm   = String(now.getMonth() + 1).padStart(2, '0');
+  const dd   = String(now.getDate()).padStart(2, '0');
+  const hoy  = `${yyyy}-${mm}-${dd}`;
+  document.getElementById('fecha-gasto').value   = hoy;
+  document.getElementById('fecha-ingreso').value = hoy;
+}
+
+// ─── CONECTIVIDAD ────────────────────────────────────────────────────────────
+async function checkConnectivity() {
+  const dot  = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  try {
+    const res = await fetch(IS_LOCAL ? DIRECT_URL : PROXY_URL, {
+      method: 'GET',
+      mode: IS_LOCAL ? 'no-cors' : 'cors',
+      signal: AbortSignal.timeout(5000),
+    });
+    // Si llegamos aquí (incluso con no-cors opaque) = hay red
+    dot.classList.add('online');
+    text.textContent = 'conectado · google sheets';
+  } catch(e) {
+    dot.classList.add('offline');
+    text.textContent = 'sin conexión · datos en cola';
+  }
+}
+
+// ─── CATEGORIAS ──────────────────────────────────────────────────────────────
+async function loadCategorias() {
+  const cached = localStorage.getItem('c72_cats');
+  if (cached) {
+    try {
+      const cats = JSON.parse(cached);
+      if (cats && cats.length > 0) { poblarSelects(cats); return; }
+    } catch(e) {}
+  }
+  poblarSelects(CAT_FALLBACK);
+  // En Vercel el proxy podría soportar GET para categorías si se extiende el proxy
+  // Por ahora se usan las del fallback/cache
+}
+
+function poblarSelects(cats) {
+  ['gasto','ingreso'].forEach(tipo => {
+    const sel = document.getElementById(`cat-${tipo}`);
+    sel.innerHTML = '<option value="">— elegir categoría —</option>';
+    cats.sort().forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function switchTab(tipo) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab-${tipo}`).classList.add('active');
+  document.getElementById(`panel-${tipo}`).classList.add('active');
+}
+
+// ─── NUMPAD ──────────────────────────────────────────────────────────────────
+function numpadPress(tipo, digit) {
+  if (state[tipo].length >= 10) return;
+  if (digit === '0' && state[tipo] === '') return;
+  state[tipo] += digit;
+  updateDisplay(tipo);
+  document.getElementById(`monto-manual-${tipo}`).value = state[tipo];
+  haptic(8);
+}
+
+function numpadDel(tipo) {
+  state[tipo] = state[tipo].slice(0, -1);
+  updateDisplay(tipo);
+  document.getElementById(`monto-manual-${tipo}`).value = state[tipo] || '';
+  haptic(5);
+}
+
+function syncManual(tipo) {
+  const val = document.getElementById(`monto-manual-${tipo}`).value;
+  state[tipo] = val ? String(Math.abs(Math.round(parseFloat(val)) || 0)) : '';
+  updateDisplay(tipo);
+}
+
+function updateDisplay(tipo) {
+  const num = parseInt(state[tipo]) || 0;
+  document.getElementById(`val-${tipo}`).textContent = num.toLocaleString('es-AR');
+}
+
+function haptic(ms) {
+  if (navigator.vibrate) navigator.vibrate(ms || 8);
+}
+
+// ─── EXTRAS ──────────────────────────────────────────────────────────────────
+function toggleExtras(tipo) {
+  const panel = document.getElementById(`extras-${tipo}`);
+  const btn   = panel.previousElementSibling;
+  const open  = panel.classList.toggle('open');
+  btn.textContent = open ? '− descripción opcional' : '+ descripción opcional';
+}
+
+// ─── ENVIAR ──────────────────────────────────────────────────────────────────
+async function enviar(tipo) {
+  const monto = parseInt(state[tipo]) || 0;
+  const cat   = document.getElementById(`cat-${tipo}`).value.trim();
+  const fecha = document.getElementById(`fecha-${tipo}`).value;
+  const descEl = document.getElementById(`desc-${tipo}`);
+  const desc  = descEl ? descEl.value.trim() : '';
+
+  // Validaciones
+  if (monto <= 0)  { showToast('⚠ ingresá un monto mayor a 0', 'err'); return; }
+  if (!cat)        { showToast('⚠ elegí una categoría', 'err'); return; }
+  if (!fecha)      { showToast('⚠ indicá la fecha', 'err'); return; }
+
+  const btn = document.getElementById(`btn-${tipo}`);
+  btn.disabled = true;
+  showLoading(true);
+
+  const now = new Date();
+  const payload = {
+    Fecha      : fecha,
+    Tipo       : tipo.toUpperCase(),
+    Monto      : monto,
+    Categoria  : cat,
+    Descripcion: desc,
+    CreadoEn   : now.toISOString(),
+  };
+
+  try {
+    let ok = false;
+    let errorMsg = '';
+
+    if (IS_LOCAL) {
+      // Desarrollo local: no-cors, asumimos éxito
+      await fetch(DIRECT_URL, {
+        method : 'POST',
+        mode   : 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify(payload),
+      });
+      ok = true;
+    } else {
+      // Producción (Vercel): usa proxy → podemos leer la respuesta
+      const res  = await fetch(PROXY_URL, {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify(payload),
+      });
+      const data = await res.json();
+      ok = data.ok === true;
+      errorMsg = data.error || '';
+    }
+
+    showLoading(false);
+
+    if (ok) {
+      const emoji = tipo === 'gasto' ? '▼' : '▲';
+      showToast(`${emoji} ${tipo.toUpperCase()} $${monto.toLocaleString('es-AR')} guardado`, 'ok');
+      resetForm(tipo);
+      haptic([50, 30, 80]);
+    } else {
+      showToast(`✗ error: ${errorMsg || 'reintentá'}`, 'err');
+    }
+
+  } catch(err) {
+    showLoading(false);
+    showToast('✗ sin conexión · reintentá', 'err');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+}
+
+function resetForm(tipo) {
+  state[tipo] = '';
+  updateDisplay(tipo);
+  document.getElementById(`monto-manual-${tipo}`).value = '';
+  document.getElementById(`cat-${tipo}`).value = '';
+  const descEl = document.getElementById(`desc-${tipo}`);
+  if (descEl) descEl.value = '';
+  setTodayDates();
+  const extras = document.getElementById(`extras-${tipo}`);
+  if (extras.classList.contains('open')) toggleExtras(tipo);
+}
+
+// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+function showLoading(show) {
+  document.getElementById('loadingOverlay').classList.toggle('show', show);
+}
+
+let toastTimer;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3800);
+}
+</script>
+</body>
+</html>
